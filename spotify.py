@@ -9,11 +9,64 @@ Created on Mon Apr 11 12:09:10 2022
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import plotly.express as px
 import streamlit as st
 # from datetime import datetime
 
 # define functions
+def overallGraph():
+    fig = make_subplots(rows = 4 , cols = 3,
+                    specs=[[{}, {}, {}],
+                           [{}, {}, {}],
+                           [{}, {}, {}],
+                           [{}, {}, {}]],
+                   subplot_titles=["Acousticness", "Danceability", "Energy", "Instrumentalness",
+                                  "Liveness", "Loudness", "Speechiness", "Tempo", "Valence",
+                                  "Mode", "Explicit", "Popularity"]) 
+    trace1 = go.Histogram(x=df["acousticness"],
+            nbinsx=45, showlegend=False) 
+    trace2 = go.Histogram(x=df["danceability"],
+            nbinsx=45, showlegend=False) 
+    trace3 = go.Histogram(x=df["energy"],
+            nbinsx=45, showlegend=False) 
+    trace4 = go.Histogram(x=df["instrumentalness"],
+            nbinsx=45, showlegend=False) 
+    trace5 = go.Histogram(x=df["liveness"],
+            nbinsx=45, showlegend=False) 
+    trace6 = go.Histogram(x=df["loudness"],
+            nbinsx=45, showlegend=False) 
+    trace7 = go.Histogram(x=df["speechiness"],
+            nbinsx=45, showlegend=False) 
+    trace8 = go.Histogram(x=df["tempo"],
+            nbinsx=45, showlegend=False) 
+    trace9 = go.Histogram(x=df["valence"],
+            nbinsx=45, showlegend=False) 
+    trace10 = go.Histogram(x=df["mode"], showlegend=False) 
+    trace11 = go.Histogram(x=df["explicit"], showlegend=False) 
+    trace12 = go.Histogram(x=df["popularity"],
+            nbinsx=45, showlegend=False) 
+    fig.append_trace(trace1, 1, 1) 
+    fig.append_trace(trace2, 1, 2) 
+    fig.append_trace(trace3, 1, 3) 
+    fig.append_trace(trace4, 2, 1) 
+    fig.append_trace(trace5, 2, 2) 
+    fig.append_trace(trace6, 2, 3) 
+    fig.append_trace(trace7, 3, 1) 
+    fig.append_trace(trace8, 3, 2) 
+    fig.append_trace(trace9, 3, 3) 
+    fig.append_trace(trace10, 4, 1) 
+    fig.append_trace(trace11, 4, 2) 
+    fig.append_trace(trace12, 4, 3)
+    
+    fig.update_layout(height = 750, width = 900, autosize=True,
+                      title={
+                    'text': "Distribution of Features",
+                    'x':0.5,
+                    'xanchor': 'center',
+                    'yanchor': 'top'})
+    
+    return fig
 
 # load data
 @st.cache
@@ -31,7 +84,7 @@ artistsCount = len(df.artist_name.unique())
 albumCount = len(df.album.unique())
 
 # dropdown
-features = ['acousticness', 'danceability', 'energy', 'instrumentalness',
+features = ['overall', 'acousticness', 'danceability', 'energy', 'instrumentalness',
             'liveness', 'loudness', 'speechiness', 'tempo', 'valence', 
             'explicit', 'mode', 'popularity']
 
@@ -68,22 +121,46 @@ if add_sidebar == "Overall Metrics":
     # dropdown
     feature_select = st.selectbox('Features of Songs stored by Spotify. Pick a Feature:', features)
     # features information
-    col1, col2 = st.columns(2)
-    with col1:
-        st.header(feature_select.capitalize())
-        # st.text(features_info[feature_select]) NOOO TEXT WRAP
-        st.write(features_info[feature_select].capitalize())
-    with col2:
-        fig = px.histogram(df, 
-                           x=feature_select,
-                           nbins=45, 
-                           marginal='box') 
-        fig.update_traces(marker_line_color='black', 
-                          marker_line_width=1.2) 
-        fig.update_layout(uniformtext_minsize=14, 
-                          uniformtext_mode="hide", 
-                          legend={'x':0, 'y':1.0}) 
-        st.plotly_chart(fig)
+    if feature_select == "overall":
+        st.header(":star: Overall Feature Metrics")
+        # display only those which have the highest popularity
+        st.write("You can look at only 4 of them in a popularity sorted manner out of all the columns.")
+        df_90 = df.loc[df["popularity"]>=90, ["album", "artist_name", "name", "popularity"]] 
+        df_90.sort_values("popularity", inplace=True, ascending=False)
+        df_90.reset_index(drop=True, inplace=True)
+        # st.dataframe(df_90.style.highlight_max(axis=0))
+        # th_props = [('background', '#7CAE00'), 
+        #          ('color', 'white'),
+        #          ('font-family', 'verdana')]
+        # td_props = [('font-family', 'verdana')]
+        # tr_odd = [('background', '#DCDCDC')]
+        # tr_even = [('background', 'white')]
+        # tr_hover = [('background-color', 'yellow')]
+        # styles = [
+        #    dict(selector="th", props=th_props),
+        #    dict(selector="td", props=td_props),
+        #   dict(selector="tr:nth-of-type(odd)", props=tr_odd),
+        #    dict(selector="tr:nth-of-type(even)", props=tr_even),
+        #    dict(selector="tr:hover", props=tr_hover)]
+        st.dataframe(df_90)
+        st.plotly_chart(overallGraph())
+    else:
+        col1, col2 = st.columns(2) 
+        with col1:
+            st.header(feature_select.capitalize())
+            # st.text(features_info[feature_select]) NOOO TEXT WRAP
+            st.write(features_info[feature_select].capitalize()) 
+        with col2: 
+            fig = px.histogram(df, 
+                               x=feature_select, 
+                               nbins=45, 
+                               marginal='box') 
+            fig.update_traces(marker_line_color='black', 
+                              marker_line_width=1.2) 
+            fig.update_layout(uniformtext_minsize=14, 
+                              uniformtext_mode="hide", 
+                              legend={'x':0, 'y':1.0}) 
+            st.plotly_chart(fig)
     
 if add_sidebar == "Artist Analysis":
     st.title("Artist Analysis")

@@ -12,6 +12,20 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 import streamlit as st
+
+##################################################################
+#default streamlit settings
+##################################################################
+
+# wide page layout
+st.set_page_config(layout="wide")
+
+# hide the menu button
+st.markdown(""" <style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style> """, unsafe_allow_html=True)
+
 # from datetime import datetime
 
 # define functions

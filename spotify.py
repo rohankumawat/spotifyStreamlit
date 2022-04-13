@@ -28,7 +28,10 @@ footer {visibility: hidden;}
 
 # from datetime import datetime
 
+##################################################################
 # define functions
+##################################################################
+
 def overallGraph(data):
     fig = make_subplots(rows = 4 , cols = 3,
                     specs=[[{}, {}, {}],
@@ -100,15 +103,24 @@ def artis(artist):
     # avg popularity of songs
     avg_pop = df_art.popularity.mean()
     return df_art, popAlb, couAlb, couSon, avg_dur, avg_pop
-    
+
+##################################################################
 # load data
+##################################################################
 @st.cache
 def load_data():
     df = pd.read_csv('spotify15k.csv')
     df.drop(["Unnamed: 0", "Unnamed: 0.1", "track_number"], axis=1, inplace=True)
     return df
 
+@st.cache
+def convert_df(df):
+     # IMPORTANT: Cache the conversion to prevent computation on every rerun
+     return df.to_csv().encode('utf-8')
+
+
 df = load_data()
+download_df = convert_df(df)
 
 ##################################################################
 # engineer data
@@ -148,7 +160,7 @@ artList.insert(0, "Overall")
 
 # sidebar
 
-add_sidebar = st.sidebar.selectbox('Analysis', ('Overall Metrics', 'Artist Analysis'))
+add_sidebar = st.sidebar.selectbox('Analysis', ('Overall Metrics', 'Artist Analysis', 'Album Analysis', 'Clustering', 'Recommendation System'))
 
 # total picture
 
@@ -157,17 +169,46 @@ add_sidebar = st.sidebar.selectbox('Analysis', ('Overall Metrics', 'Artist Analy
 if add_sidebar == "Overall Metrics":
     st.title(":smile_cat: Spotify Analysis")
     
-    # showing dataset details
+    # explanation
+    st.text("Spotify is an audio streaming and media services provider. It is one of the largest music streaming service providers, with over 406 Million monthly active users.")
+    with st.expander("Click for more information:"):
+        st.markdown("""
+                    The __Web App__ shows an in-depth analysis of the Spotify Dataset. 
+                    
+                    It is divided into multiple parts: __Overall Analysis__, __Artist Analysis__, __Album Analysis__, __Clustering__, and __Recommendation Engine__. 
+                    
+                    - Overall Metrics presents an overall summary of songs and the features that Spotify stores.
+                    
+                    - Artist Analysis shows every artists' statistics.
+                    
+                    - The Album Analysis page contains information on albums and songs.""")
+                    
+        st.download_button(
+            label="To work on the dataset, click on this to Downlaod",
+            data=download_df,
+            file_name='spotify.csv',
+            mime='text/csv',
+            )
     
+    # showing dataset details
     col1, col2, col3 = st.columns(3)
     
-    col1.metric("Artists", artistsCount)
-    col2.metric("Albums", albumCount)
-    col3.metric("Songs", songsCount)
+    col1.metric("No. of Artists", artistsCount)
+    col2.metric("No. of Albums", albumCount)
+    col3.metric("No. of Songs", songsCount)
     
     # dropdown
-    feature_select = st.selectbox('Features of Songs stored by Spotify. Pick a Feature (To know about it in depth):', features)
-    
+    feature_select = st.selectbox('Features of Songs stored by Spotify. Pick a Feature (To know about each feature in depth):', features)
+    with st.expander("Click to know about Features:"):
+        st.markdown("""
+                    __Spotify__ is known for its algorithm, the main outstanding point of the streaming giant to its competitors. 
+                    The algorithm constantly finds new ways to understand the kind of music one listens to and analyses the reason 
+                    behind a person listening to a particular song or preferring a particular genre. 
+                    Spotify stores data of artists, albums, songs, and users and relies on its algorithm, unlike any other music streaming service, 
+                    to achieve all of the abovementioned things. When it comes to songs, it stores some song features and strongly analyses all of the songs. 
+                    
+                    I've extracted out songs features using the __Spotify API__. The graph below shows the distribution of the song's features (Basically, where do songs' features lie in a specific range).
+                    """)
     # features information
     if feature_select == "overall":
         st.header(":star: Overall Summary")
@@ -175,7 +216,7 @@ if add_sidebar == "Overall Metrics":
         df_90 = df.loc[df["popularity"]>=90, ["album", "artist_name", "name", "popularity"]] 
         df_90.sort_values("popularity", inplace=True, ascending=False)
         df_90.reset_index(drop=True, inplace=True)
-        st.write("You can look at only 4 of them in a popularity sorted manner out of all the columns.")
+        st.write("Top songs in the dataset (currently). [Filtered by Popularity]")
         st.dataframe(df_90)
         # st.dataframe(df_90.style.highlight_max(axis=0))
         # th_props = [('background', '#7CAE00'), 
@@ -215,7 +256,7 @@ if add_sidebar == "Overall Metrics":
 
 if add_sidebar == "Artist Analysis":
     st.title(":smile_cat: Artist Analysis")
-    
+    # st.snow()
     # dropdown
     artist_select = st.selectbox('Pick an Artist: ', artList)
     
@@ -319,3 +360,24 @@ if add_sidebar == "Artist Analysis":
         
         # displaying features of the artist
         st.plotly_chart(overallGraph(df_art))
+
+# ALBUM ANALYSIS SELECT
+        
+if add_sidebar == "Album Analysis":
+    st.title(":smile_cat: Album Analysis")
+    
+    st.write("CURRENTLY WORKING ON IT! 	:crying_cat_face: 	:crying_cat_face: 	:crying_cat_face:")
+
+# CLUSTERING SELECT
+
+if add_sidebar == "Clustering":
+    st.title(":smile_cat: Clustering")
+    
+    st.write("CURRENTLY WORKING ON IT! 	:crying_cat_face: 	:crying_cat_face: 	:crying_cat_face:")
+    
+# RECOMMENDATION SYSTEM SELECT
+
+if add_sidebar == "Recommendation System":
+    st.title(":smile_cat: Recommendation System")
+    
+    st.write("CURRENTLY WORKING ON IT! 	:crying_cat_face: 	:crying_cat_face: 	:crying_cat_face:")

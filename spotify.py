@@ -104,6 +104,27 @@ def artis(artist):
     avg_pop = df_art.popularity.mean()
     return df_art, popAlb, couAlb, couSon, avg_dur, avg_pop
 
+def albu(album):
+    # Extract album details
+    df_alb = df[df["album"] == album]
+    
+    # Sorting the songs based on popularity
+    df_alb.sort_values('popularity', ascending=False, inplace=True)
+    
+    # Reset the index of the sorted DataFrame
+    df_alb.reset_index(drop=True, inplace=True)
+    
+    # Count the number of songs in the album
+    couSong = len(df_alb)
+    
+    # Calculate the average duration of songs in the album
+    avg_dura = int(df_alb.duration_ms.mean())
+    
+    # Calculate the average popularity of songs in the album
+    avg_popu = int(df_alb.popularity.mean())
+    
+    return df_alb, couSong, avg_dura, avg_popu
+
 ##################################################################
 # load data
 ##################################################################
@@ -154,6 +175,11 @@ artList = df['artist_name'].unique()
 artList = artList.tolist()
 artList.insert(0, "Overall")
 
+# album
+albList = df['album'].unique()
+albList = albList.tolist()
+albList.insert(0, "Overall")
+
 ##################################################################
 # build dashboard
 ##################################################################
@@ -164,8 +190,9 @@ add_sidebar = st.sidebar.selectbox('Analysis', ('Overall Metrics', 'Artist Analy
 
 # total picture
 
+##################################################################
 # OVERALL SIDEBAR SELECT
-
+##################################################################
 if add_sidebar == "Overall Metrics":
     st.title(":smile_cat: Spotify Analysis")
     
@@ -251,9 +278,11 @@ if add_sidebar == "Overall Metrics":
                               uniformtext_mode="hide", 
                               legend={'x':0, 'y':1.0}) 
             st.plotly_chart(fig)
-    
-# ARTIST SIDEBAR SELECT
 
+##################################################################    
+# ARTIST SIDEBAR SELECT
+##################################################################
+            
 if add_sidebar == "Artist Analysis":
     st.title(":smile_cat: Artist Analysis")
     # st.snow()
@@ -363,22 +392,85 @@ if add_sidebar == "Artist Analysis":
         # displaying features of the artist
         st.plotly_chart(overallGraph(df_art))
 
+##################################################################
 # ALBUM ANALYSIS SELECT
-        
+##################################################################
+                
 if add_sidebar == "Album Analysis":
     st.title(":smile_cat: Album Analysis")
-    
-    st.write("CURRENTLY WORKING ON IT! 	:crying_cat_face: 	:crying_cat_face: 	:crying_cat_face:")
 
+    album_select = st.selectbox('Pick an Album: ', albList)
+
+    if album_select == "Overall":
+        st.title(":star: Summary of Artists")
+
+        # total number of songs per album
+        songXalbCount = df['album'].value_counts()
+        songXalbCount = songXalbCount.to_frame().reset_index()
+        songXalbCount_15 = songXalbCount.head(15)
+        print(songXalbCount_15)
+        # displaying graph no. 1
+        fig = px.bar(songXalbCount_15,
+             x="count",
+             y="album",
+             color='count',
+             opacity=0.9,
+            color_continuous_scale=px.colors.sequential.Peach,
+            range_color=[40, 50],
+            text='count',
+            hover_name="count",
+            labels={"album":"Album Name", "count": "Number of Songs"},
+            template="plotly_white")
+        
+        fig.update_traces(marker_line_color='black',
+                          marker_line_width=1.5)
+        
+        fig.update_layout(uniformtext_minsize=14,
+                 uniformtext_mode="hide",
+                 height = 700, width = 1200,
+                 legend={'x':0,'y':1.0},
+                 title={
+                    'text': "Number of Songs per Album",
+                    'x':0.5,
+                    'xanchor': 'center',
+                    'yanchor': 'top'}
+                 )
+        
+        st.plotly_chart(fig)
+
+    else:
+        st.header(album_select)
+
+        # retreive album's information
+        df_alb, couSong, avg_dura, avg_popu = albu(album_select)
+
+        # showing album details
+        col1, col2 = st.columns(2)
+        col1.metric("No. of Songs", couSong)
+        col2.metric("Average Duration", avg_dura)
+
+        col1, col2 = st.columns(2)
+        col2.metric("Average Popularity", avg_popu)
+        with col1:
+            st.title("Top 5 Songs")
+            st.dataframe(df_alb.loc[0:5, ["name", "popularity", "duration_ms"]])
+        
+        # displaying features of the artist
+        st.plotly_chart(overallGraph(df_alb))
+
+##################################################################
 # CLUSTERING SELECT
-
+##################################################################
+    
 if add_sidebar == "Clustering":
     st.title(":smile_cat: Clustering")
     
     st.write("CURRENTLY WORKING ON IT! 	:crying_cat_face: 	:crying_cat_face: 	:crying_cat_face:")
-    
-# RECOMMENDATION SYSTEM SELECT
 
+##################################################################    
+# RECOMMENDATION SYSTEM SELECT
+##################################################################
+    
 if add_sidebar == "Recommendation System":
     st.title(":smile_cat: Recommendation System")
     

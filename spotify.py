@@ -265,9 +265,11 @@ if add_sidebar == "Artist Analysis":
         # total number of songs per artist
         songXartCount = df['artist_name'].value_counts()
         songXartCount = songXartCount.to_frame().reset_index()
-        songXartCount = songXartCount.rename(columns={"index": "artist_name", "artist_name": "count"})
+        # songXartCount = songXartCount.rename(columns={"index": "artist_name", "artist_name": "count"})
+        songXartCount_15 = songXartCount.head(15)
+        # print(songXartCount_15)
         # displaying graph no. 1
-        fig = px.bar(songXartCount.loc[0:15],
+        fig = px.bar(songXartCount_15,
              x="count",
              y="artist_name",
              color='count',

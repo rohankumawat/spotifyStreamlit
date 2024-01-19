@@ -1,0 +1,43 @@
+name: Feature Request
+description: Got a cool idea? Suggest it here!
+title: ":bulb: "
+labels: ["enhancement", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for suggesting an idea for the project! Please fill out the sections below to help us understand your idea better.
+
+        We love to hear any and all ideas that you may have. It would be great to get as much detail from you as possible so that we can make sure we're building something that will help you and others.
+
+        **Helpful Links**
+        - [Code of Conduct](https://github.com/rohankumawat/spotifyStreamlit/blob/main/CODE_OF_CONDUCT.md)
+  - type: checkboxes
+    attributes:
+      label: Idea Contribution
+      description: This project has a Code of Conduct that all participants must agree to follow. Please read and check the boxes below to indicate your agreement.
+      options:
+        - label: I have read and agree to follow this project's [Code of Conduct](https://github.com/rohankumawat/spotifyStreamlit/blob/main/CODE_OF_CONDUCT.md).
+          required: true
+  - type: textarea
+    id: whats-your-idea
+    attributes:
+      label: Tell us about your idea.
+      description: |
+        - Give as much detail as you can to help us understand the change you want to see.
+        - Why should the project be changed? What use cases does it support?
+        - What is the expected outcome?
+    validations:
+      required: true
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else?
+      description: Anything else that we should know about your issue?
+      placeholder: |
+        e.g.:
+        - System information
+        - Version information
+    validations:
+      required: false
+  

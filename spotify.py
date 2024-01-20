@@ -128,13 +128,13 @@ def albu(album):
 ##################################################################
 # load data
 ##################################################################
-@st.cache
+@st.cache_data
 def load_data():
     df = pd.read_csv('spotify15k.csv')
     df.drop(["Unnamed: 0", "Unnamed: 0.1", "track_number"], axis=1, inplace=True)
     return df
 
-@st.cache
+@st.cache_data
 def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')

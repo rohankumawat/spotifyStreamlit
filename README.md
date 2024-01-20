@@ -48,27 +48,11 @@ pip install -r requirements.txt
 streamlit run spotify.py
 ```
 
-### How to Contribute
+### Contributing
 
-We welcome contributions! If you have suggestions or want to contribute to the project, please follow these steps:
+We welcome contributions to the spotifyStreamlit project! If you're interested in helping out, please take a moment to read through our [CONTRIBUTING.md](https://github.com/rohankumawat/spotifyStreamlit/blob/main/docs/CONTRIBUTING.md) file. It contains important information about how to contribute to the project, including how to submit issues, pull requests, and coding standards to follow.
 
-1. Fork the repository.
-
-2. Create a new branch
-```
-git checkout -b feature-branch
-```
-3. Make your changes.
-
-4. Commit your changes
-```
-git commit -am 'Add some feature'
-```
-5. Push to the branch
-```
-git push origin feature-branch
-```
-6. Create a new Pull Request.
+Your contributions play a significant role in the continuous development of spotifyStreamlit, and we greatly appreciate any effort you make to help improve this project.
 
 ## Support
 

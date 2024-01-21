@@ -85,9 +85,6 @@ def overallGraph(data):
     
     return fig
 
-if "function" not in st.session_state:
-    st.session_state["function"] = overallGraph
-
 ##################################################################
 # load data
 ##################################################################
@@ -102,14 +99,8 @@ def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
      return df.to_csv().encode('utf-8')
 
-
-# Load data and store in session_state if not already loaded
-if 'df' not in st.session_state:
-    df = load_data()
-    st.session_state['df'] = df
-if 'download_df' not in st.session_state:
-    download_df = convert_df(st.session_state['df'])
-    st.session_state['download_df'] = download_df
+df = load_data()
+download_df = convert_df(df)
 
 # artist
 artList = df['artist_name'].unique()
@@ -120,10 +111,3 @@ artList.insert(0, "Overall")
 albList = df['album'].unique()
 albList = albList.tolist()
 albList.insert(0, "Overall")
-
-# Check if the session state variable exists, if not, then assign it
-if 'artList' not in st.session_state:
-    st.session_state['artList'] = artList
-
-if 'albList' not in st.session_state:
-    st.session_state['albList'] = albList

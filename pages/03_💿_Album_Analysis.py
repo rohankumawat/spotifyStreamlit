@@ -3,12 +3,16 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
+import sys
+from pathlib import Path
 
-df = st.session_state['df']
-artList = st.session_state['artList']
-albList = st.session_state['albList']
-if "function" in st.session_state:
-    overallGraph = st.session_state["function"]
+# Get the parent directory
+parent_dir = str(Path(__file__).parent.parent)
+
+# Add the parent directory to sys.path
+sys.path.append(parent_dir)
+
+from spotify import df, download_df, artList, albList, overallGraph
 
 def albu(album):
     # Extract album details

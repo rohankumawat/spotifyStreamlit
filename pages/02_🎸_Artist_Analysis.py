@@ -12,7 +12,7 @@ parent_dir = str(Path(__file__).parent.parent)
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from spotify import df, artList, overallGraph
+from Spotify import df, artList, overallGraph
 
 def artis(artist):
     # extract artist details
@@ -72,7 +72,7 @@ if artist_select == "Overall":
                 'xanchor': 'center',
                 'yanchor': 'top'}
                 )
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
     
     # total number of albums per artist
     albXart = df.groupby('artist_name').album.unique()
@@ -112,7 +112,7 @@ if artist_select == "Overall":
                 'xanchor': 'center',
                 'yanchor': 'top'}
                 )
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 else:
     st.header(artist_select)
@@ -139,4 +139,4 @@ else:
         st.dataframe(popAlb)
     
     # displaying features of the artist
-    st.plotly_chart(overallGraph(df_art))
+    st.plotly_chart(overallGraph(df_art), use_container_width=True)

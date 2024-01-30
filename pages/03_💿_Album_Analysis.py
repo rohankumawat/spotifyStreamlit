@@ -12,7 +12,7 @@ parent_dir = str(Path(__file__).parent.parent)
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from spotify import df, download_df, artList, albList, overallGraph
+from Spotify import df, download_df, artList, albList, overallGraph
 
 def albu(album):
     # Extract album details
@@ -74,7 +74,7 @@ if album_select == "Overall":
                 'yanchor': 'top'}
                 )
     
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 else:
     st.header(album_select)
@@ -94,4 +94,4 @@ else:
         st.dataframe(df_alb.loc[0:5, ["name", "popularity", "duration_ms"]])
     
     # displaying features of the artist
-    st.plotly_chart(overallGraph(df_alb))
+    st.plotly_chart(overallGraph(df_alb), use_container_width=True)

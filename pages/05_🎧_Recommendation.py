@@ -11,5 +11,5 @@ parent_dir = str(Path(__file__).parent.parent)
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
 
-from spotify import df, download_df, artList, albList, overallGraph
+from Spotify import df, download_df, artList, albList, overallGraph
 st.title(":smile_cat: Recommendation (Coming Soon)")

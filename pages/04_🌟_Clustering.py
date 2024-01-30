@@ -19,7 +19,8 @@ import pandas as pd
 
 #######################################
 #-----------------title---------------#
-st.title(":smile_cat: Clutering (Coming Soon)")
+#######################################
+st.title(":smile_cat: Clutering")
 
 #######################################
 #-------K-means Clustering------------#
@@ -42,7 +43,7 @@ def cluster(n_clusters, df):
     return kmeans, df, centroids
 
 #######################################
-#---------------Plotting--------------#
+#------------Plotting 2D--------------#
 #######################################
 def plot_clusters(df, n_clusters):
     # Selecting the features for correlation analysis
@@ -60,8 +61,11 @@ def plot_clusters(df, n_clusters):
     df_pca = pd.DataFrame(data = principal_components, columns = ['principal component 1', 'principal component 2'])
     df_pca['cluster'] = df['cluster']
 
+    # Create a color map
+    color_map = px.colors.qualitative.Plotly
+
     # Create a scatter plot
-    fig = px.scatter(df_pca, x='principal component 1', y='principal component 2', color='cluster')
+    fig = px.scatter(df_pca, x='principal component 1', y='principal component 2', color='cluster', color_continuous_scale=px.colors.sequential.Plasma)
 
     # Calculate the centroids for the principal components
     centroids_pca = pca.transform(centroids)
@@ -74,7 +78,7 @@ def plot_clusters(df, n_clusters):
         mode='markers',
         marker=dict(
             size=10,
-            color='LightSkyBlue',
+            color=[color_map[i % len(color_map)] for i in range(n_clusters)],
             symbol='x',
             line=dict(
                 width=2,
@@ -87,15 +91,71 @@ def plot_clusters(df, n_clusters):
     # fig.show()
     return fig
 
-def plot_clusters_3d(df):
-    fig = px.scatter_3d(df, x="feature1", y="feature2", z="feature3", color="cluster")
+#######################################
+#------------Plotting 3D--------------#
+#######################################
+def plot_clusters_3d(df, n_clusters):
+    # Selecting the features for correlation analysis
+    features = ['danceability', 'energy', 'loudness', 'valence', 'tempo', 
+                'acousticness', 'instrumentalness', 'liveness', 'speechiness']
+    
+    # Call the cluster function to get the clustered data
+    kmeans, df, centroids = cluster(n_clusters, df)
+
+    # Apply PCA and reduce the data to two dimensions for visualization
+    pca = PCA(n_components=3)
+    principal_components = pca.fit_transform(df[features])
+
+    # Create a DataFrame with the two principal components and the cluster labels
+    df_pca = pd.DataFrame(data = principal_components, columns = ['principal component 1', 'principal component 2', 'principal component 3'])
+    df_pca['cluster'] = df['cluster']
+
+    # Calculate the centroids for the principal components
+    centroids_pca = pca.transform(centroids)
+
+    # Create a color map
+    color_map = px.colors.qualitative.Plotly
+
+    fig = px.scatter_3d(df_pca, x="principal component 1", y="principal component 2", z="principal component 3", color="cluster", color_continuous_scale=px.colors.sequential.Plasma)
+
+    # Add centroid markers
+    fig.add_trace(go.Scatter3d(
+        x=centroids_pca[:, 0], 
+        y=centroids_pca[:, 1],
+        z=centroids_pca[:, 2],
+        customdata=df[['name', 'artist_name']],
+        mode='markers',
+        marker=dict(
+            size=5,
+            color=[color_map[i % len(color_map)] for i in range(n_clusters)],
+            symbol='x',
+            line=dict(
+                width=2,
+            )
+        ),
+        name='centroids',
+        hovertemplate='<b>{customdata[0]}<b><br><br>' + '{customdata[1]}',
+    ))
+
     return fig
 
 # slider for number of clusters
-cluster_no = st.slider("Number of Clusters", 1, 50)
+cluster_no = st.slider("Number of Clusters", 1, 25, 5) # initial cluter number is 5
 
 # call the plot_clusters function
-fig = plot_clusters(df, cluster_no)
+fig1 = plot_clusters(df, cluster_no)
+
+# call the plot_clusters_3d function
+fig2 = plot_clusters_3d(df, cluster_no)
+
+# create two columns
+# col1, col2 = st.columns(2)
+
+# create two columns
+tab1, tab2 = st.tabs(["Clustering 2D Graph", "Clustering 3D Graph"])
 
 # display the plot
-st.plotly_chart(fig)
+tab1.plotly_chart(fig1, use_container_width=True)
+
+# display the plot
+tab2.plotly_chart(fig2, use_container_width=True)

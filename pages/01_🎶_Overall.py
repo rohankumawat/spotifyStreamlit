@@ -13,8 +13,6 @@ sys.path.append(parent_dir)
 
 from spotify import df, download_df, artList, albList, overallGraph
 
-st.write("Overall Analysis")
-
 st.title(":smile_cat: Spotify Analysis")
 
 ##################################################################

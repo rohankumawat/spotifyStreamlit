@@ -33,7 +33,7 @@ def cluster(n_clusters, df):
     # Standardizing the data
     scaler = StandardScaler()
     scaled_data = scaler.fit_transform(clustering_data)
-    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=42, n_init=10)
     kmeans.fit(scaled_data) # pass scaled data
     # Add cluster labels to the original data
     df['cluster'] = kmeans.labels_
@@ -44,7 +44,11 @@ def cluster(n_clusters, df):
 #######################################
 #---------------Plotting--------------#
 #######################################
-def plot_clusters(df):
+def plot_clusters(df, n_clusters):
+    # Selecting the features for correlation analysis
+    features = ['danceability', 'energy', 'loudness', 'valence', 'tempo', 
+                'acousticness', 'instrumentalness', 'liveness', 'speechiness']
+    
     # Call the cluster function to get the clustered data
     kmeans, df, centroids = cluster(n_clusters, df)
 
@@ -66,6 +70,7 @@ def plot_clusters(df):
     fig.add_trace(go.Scatter(
         x=centroids_pca[:, 0], 
         y=centroids_pca[:, 1],
+        customdata=df[['name', 'artist_name']],
         mode='markers',
         marker=dict(
             size=10,
@@ -76,10 +81,11 @@ def plot_clusters(df):
             )
         ),
         name='centroids',
-        hovertemplate='<b>{df['name']}<b><br><br>' + '{df['artist_name']}'
+        hovertemplate='<b>{customdata[0]}<b><br><br>' + '{customdata[1]}',
     ))
 
-    fig.show()
+    # fig.show()
+    return fig
 
 def plot_clusters_3d(df):
     fig = px.scatter_3d(df, x="feature1", y="feature2", z="feature3", color="cluster")
@@ -88,3 +94,8 @@ def plot_clusters_3d(df):
 # slider for number of clusters
 cluster_no = st.slider("Number of Clusters", 1, 50)
 
+# call the plot_clusters function
+fig = plot_clusters(df, cluster_no)
+
+# display the plot
+st.plotly_chart(fig)

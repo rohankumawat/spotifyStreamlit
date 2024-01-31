@@ -28,7 +28,7 @@ print(client_secret)
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-st.title(":smile_cat: Recommendation (Coming Soon)")
+st.title(":smile_cat: Recommendation")
 
 
 # remove the square brackets from the artists
